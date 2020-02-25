@@ -5,7 +5,7 @@
     <v-row class="my-4">
       <v-col cols="4">
         <p class="headline">Account</p>
-        <v-card class="mx-auto my-4" justify-center height="350px">
+        <v-card class="mx-auto my-4" justify-center height="370px">
           <v-btn
             absolute
             small
@@ -38,18 +38,17 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-btn
-                fab
-                small
+                icon
                 absolute
                 right
                 v-on="on"
-                class="editProfileBtn"
+                class="editProfileBtn ma-2"
                 @click="editProfileDialog = true"
               >
-                <v-icon>mdi-pencil</v-icon>
+                <v-icon>mdi-settings</v-icon>
               </v-btn>
             </template>
-            <span>Edit Profile</span>
+            <span>Change your password</span>
           </v-tooltip>
 
           <div class="profileInfo">
@@ -81,8 +80,18 @@
                 style="display:none"
               />
             </v-avatar>
-
-            <p class="headline">{{ user.name }}</p>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <p
+                  class="headline"
+                  v-on="on"
+                  @click="editUsernameDialog = true"
+                >
+                  {{ user.name }}
+                </p>
+              </template>
+              <span>Change username</span>
+            </v-tooltip>
             <p class="caption">{{ user.role }}</p>
           </div>
         </v-card>
@@ -124,53 +133,55 @@
         </v-container>
       </v-card>
     </v-dialog>
-
-    <v-dialog v-model="editProfileDialog" width="500px">
+    <v-dialog v-model="editProfileDialog" width="600px">
       <v-card>
-        <v-card-title>Edit Your Profile</v-card-title>
-        <v-divider></v-divider>
-
-        <v-container>
-          <v-row justify="space-around" class="my-5">
-            <v-btn @click="changeUsername = true">Change Username</v-btn>
-          </v-row>
+        <v-card-title>
+          Change your password
+        </v-card-title>
+        <v-card-text>
           <v-text-field
-            v-if="changeUsername"
-            v-model="newName"
-            label="Username"
-          ></v-text-field>
-          <v-row justify="space-around" class="my-5">
-            <v-btn @click="changePassword = true">Change Password</v-btn>
-          </v-row>
-          <v-text-field
+            label="Current password"
             type="password"
-            v-if="changePassword"
-            v-model="currentPassword"
-            label="Current Password"
+            append-icon="mdi-key"
           ></v-text-field>
           <v-text-field
             type="password"
-            v-if="changePassword"
-            v-model="newPassword"
-            label="New Password"
+            label="New password"
+            append-icon="mdi-key"
           ></v-text-field>
           <v-text-field
             type="password"
-            v-if="changePassword"
-            v-model="confirmPassword"
-            label="Confirm Password"
+            label="Confirm password"
+            append-icon="mdi-key"
           ></v-text-field>
-          <p class="red--text">{{ errorMsg }}</p>
-        </v-container>
-
-        <v-divider></v-divider>
-
+        </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="cancelEditProfile">Cancel</v-btn>
-          <v-btn text @click="editProfile" class="font-weight-black"
-            >Save</v-btn
-          >
+          <v-btn text @click="editCredentials = false">Cancel</v-btn>
+          <v-btn text>Confirm</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="editUsernameDialog" width="600px">
+      <v-card>
+        <v-card-title>
+          Change your username
+        </v-card-title>
+        <v-card-text>
+          <v-text-field
+            label="Username"
+            append-icon="mdi-account"
+          ></v-text-field>
+          <v-text-field
+            type="password"
+            label="Password"
+            append-icon="mdi-key"
+          ></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="editUsernameDialog = false">Cancel</v-btn>
+          <v-btn text>Confirm</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -178,7 +189,7 @@
 </template>
 
 <script>
-//import { mapState } from "vuex";
+// import { mapState } from "vuex";
 import backend from "../Service";
 export default {
   data() {
@@ -192,6 +203,7 @@ export default {
       showCoverPic: false,
       showProfilePic: false,
       editProfileDialog: false,
+      editUsernameDialog: false,
       changeUsername: false,
       changePassword: false,
       newName: "",
@@ -199,7 +211,8 @@ export default {
       newPassword: "",
       confirmPassword: "",
       errorMsg: "",
-      streams: []
+      streams: [],
+      editCredentials: false
     };
   },
   methods: {
