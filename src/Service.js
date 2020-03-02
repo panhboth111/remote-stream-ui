@@ -194,6 +194,19 @@ class Service {
     return result.data;
   }
 
+  // Change user's name
+  static changeName(name, password) {
+    const token = cookie.getCookie("auth-token");
+    return axios.post(
+      `${url}users/changeName`,
+      { name , password},
+      {
+        params: {},
+        headers: { "auth-token": token }
+      }
+    );
+  }
+
   // Post Data for login
   static async login(email, pwd) {
     const credential = await axios.post(`${url}auth/login`, {
