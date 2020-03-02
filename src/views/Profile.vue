@@ -177,17 +177,19 @@
           <v-text-field
             label="Username"
             append-icon="mdi-account"
+            v-model="newName"
           ></v-text-field>
           <v-text-field
             type="password"
             label="Password"
             append-icon="mdi-key"
+            v-model="password"
           ></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="editUsernameDialog = false">Cancel</v-btn>
-          <v-btn text>Confirm</v-btn>
+          <v-btn text @click="editUsernameDialog = false,newName = user.name">Cancel</v-btn>
+          <v-btn text @click="saveUser">Confirm</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -210,8 +212,8 @@ export default {
       showProfilePic: false,
       editProfileDialog: false,
       editUsernameDialog: false,
-      changeUsername: false,
       changePassword: false,
+      password : "",
       newName: "",
       currentPassword: "",
       newPassword: "",
@@ -274,6 +276,20 @@ export default {
           this.errorMsg = "";
         }
     },
+    async saveUser(){
+      if (this.newName == ""){
+        alert("Name can't be empty!")
+      }else if (this.password == ""){
+        alert("Password can't be empty")
+      }else if (this.password.length < 4){
+        alert("Password are 4 or more characters long..")
+      }else{
+        const result = await backend.changeName(this.newName,this.password)
+        alert(result.data.message)
+        this.editUsernameDialog = false
+        location.reload();
+      }
+    }
   },
   created() {
     this.getUser();
