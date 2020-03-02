@@ -139,26 +139,32 @@
           Change your password
         </v-card-title>
         <v-card-text>
+          <v-text class="red--text">
+            {{errorMsg}}
+          </v-text>
           <v-text-field
             label="Current password"
             type="password"
             append-icon="mdi-key"
+            v-model="currentPassword"
           ></v-text-field>
           <v-text-field
             type="password"
             label="New password"
             append-icon="mdi-key"
+            v-model="newPassword"
           ></v-text-field>
           <v-text-field
             type="password"
             label="Confirm password"
             append-icon="mdi-key"
+            v-model="confirmPassword"
           ></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="editCredentials = false">Cancel</v-btn>
-          <v-btn text>Confirm</v-btn>
+          <v-btn text @click="saveCredentials">Confirm</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -233,8 +239,8 @@ export default {
       fileReader.readAsDataURL(selectedFile);
 
       fileReader.addEventListener("load", async () => {
-        this.coverPicURL = fileReader.result;
-        const response = await backend.changeCover(this.coverPicURL);
+        const temp = fileReader.result;
+        const response = await backend.changeCover(temp);
         alert(response.message);
         location.reload();
       });
@@ -247,48 +253,27 @@ export default {
       fileReader.readAsDataURL(selectedFile);
 
       fileReader.addEventListener("load", async () => {
-        this.profilePicURL = fileReader.result;
-        const response = await backend.changeProfile(this.profilePicURL);
+        const temp = fileReader.result;
+        const response = await backend.changeProfile(temp);
         alert(response.message);
         location.reload();
       });
     },
-    editProfile() {
-      if (this.changeUsername && this.newName != "") {
-        this.name = this.newName;
-        this.editProfileDialog = false;
-        this.newName = "";
-        this.changeUsername = false;
-        this.changePassword = false;
-        this.errorMsg = "";
-      }
-      if (this.changePassword) {
+    async saveCredentials() {
         if (this.currentPassword == "") {
           this.errorMsg = "*Please Enter Your Current Password";
         } else if (this.newPassword == "") {
           this.errorMsg = "*Please Enter Your New Password";
-        } else if (this.currentPassword != "Password") {
-          this.errorMsg = "*Your Current Password is Incorrect";
-        } else if (this.newPassword != this.confirmPassword) {
+        }else if (this.newPassword != this.confirmPassword) {
           this.errorMsg = "*The Passwords Do Not Match";
         } else {
-          console.log("Your Password Has Been Successfully Changed");
+          const result = await backend.changePassword(this.currentPassword,this.newPassword)
+          alert(result.data.message)
           this.editProfileDialog = false;
           this.changePassword = false;
           this.errorMsg = "";
         }
-      }
     },
-    cancelEditProfile() {
-      this.editProfileDialog = false;
-      this.changeUsername = false;
-      this.changePassword = false;
-      this.newName = "";
-      this.currentPassword = "";
-      this.newPassword = "";
-      this.confirmPassword = "";
-      this.errorMsg = "";
-    }
   },
   created() {
     this.getUser();
