@@ -61,6 +61,19 @@ class Service {
     );
   }
 
+    // Start Stream
+    static changePassword(password, newPassword) {
+      const token = cookie.getCookie("auth-token");
+      return axios.post(
+        `${url}auth/changePassword`,
+        { password, newPassword },
+        {
+          params: {},
+          headers: { "auth-token": token }
+        }
+      );
+    }
+
   // Start Stream
   static startStream(
     streamTitle,

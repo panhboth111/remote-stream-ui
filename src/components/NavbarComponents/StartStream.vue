@@ -198,12 +198,6 @@ export default {
     select_class: false,
     select_classes: false,
     classes_cast: [
-      { name: "KIT Campus I - Classroom 1", value: false },
-      { name: "KIT Campus I - Classroom 2", value: false },
-      { name: "KIT Campus I - Classroom 3", value: false },
-      { name: "KIT Campus II - Classroom 1", value: false },
-      { name: "KIT Campus II - Classroom 2", value: false },
-      { name: "KIT Campus II - Classroom 3", value: false }
     ],
     is_conference: false,
     is_private: false,
