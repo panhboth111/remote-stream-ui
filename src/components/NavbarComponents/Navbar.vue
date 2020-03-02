@@ -37,8 +37,8 @@
     <v-navigation-drawer v-model="stream_drawer" app clipped>
       <template v-slot:prepend>
         <v-list-item two-line class="my-3">
-          <v-list-item-avatar color="pink">
-            <span class="white--text">CL</span>
+          <v-list-item-avatar>
+            <img :src="user.profilePic" />
           </v-list-item-avatar>
 
           <v-list-item-content>
