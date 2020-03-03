@@ -6,7 +6,7 @@
         streams
       </h1>
       <v-spacer></v-spacer>
-      <v-btn text small @click="getcurrentlyStreaming()">Refresh</v-btn>
+      <v-btn text small @click="getcurrentlyStreaming(6)">Refresh</v-btn>
     </v-row>
     <v-row>
       <v-col v-for="stream in streams" :key="stream.id" :lg="4" :md="6" :xs="12">
@@ -28,14 +28,17 @@
 </template>
 
 <script>
+import backend from "../../Service"
 export default {
-  props: {
-    streams: Object
+  data : () => {
+    return {
+      streams : []
+    };
   },
-    methods: {
+  methods: {
     async getcurrentlyStreaming(limit) {
       const streams = await backend.getCurrentlyStreaming(limit, true);
-      console.log(streams.data);
+      this.streams = []
       if (streams.data) {
         streams.data.forEach(stream => {
           this.streams.push({
@@ -50,6 +53,9 @@ export default {
         });
       }
     }
+  },
+  created() {
+    this.getcurrentlyStreaming(6);
   }
 };
 </script>
