@@ -1,6 +1,6 @@
 <template>
   <div class="px-8 pb-8">
-    <OngoingStreams :streams="this.streams" />
+    <OngoingStreams/>
 
     <!-- <PreviousVideos :videos="this.videos" />
 
@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import backend from "../Service";
 import io from "socket.io-client";
 import OngoingStreams from "../components/HomePageComponents/OngoingStreams";
 import { URL } from "../../config";
@@ -29,33 +28,9 @@ export default {
   },
   data: () => {
     return {
-      socket: io(`http://${URL}:3001`),
-      streams: []
-
+      socket: io(`http://${URL}:3001`)
     };
   },
-  methods: {
-    async getcurrentlyStreaming(limit) {
-      const streams = await backend.getCurrentlyStreaming(limit, true);
-      console.log(streams.data);
-      if (streams.data) {
-        streams.data.forEach(stream => {
-          this.streams.push({
-            id: stream.streamCode,
-            title: stream.streamTitle,
-            description: stream.description,
-            isPrivate: true,
-            author: stream.ownerName,
-            date: stream.date,
-            img_url: "http://kit8.net/images/detailed/4/data_centre.png"
-          });
-        });
-      }
-    }
-  },
-  created() {
-    this.getcurrentlyStreaming(6, true);
-  }
 };
 </script>
 

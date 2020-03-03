@@ -163,7 +163,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="editCredentials = false">Cancel</v-btn>
+          <v-btn text @click="editProfileDialog = false">Cancel</v-btn>
           <v-btn text @click="saveCredentials">Confirm</v-btn>
         </v-card-actions>
       </v-card>
