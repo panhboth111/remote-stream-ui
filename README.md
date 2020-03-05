@@ -8,21 +8,71 @@
 
 ![Classtime Homepage](https://i.imgur.com/dL9FHxF.gif)
 
+## Technologies Used
+
+We used the **MEVN** (**MongoDB**, **Express.js**, **Vue.js**, **Node.js**) stack for developing **Classtime**.
+
+### Frontend
+
+---
+
+- **Vuejs** library is used with the **Vue CLI3** framework along with **Vuetify** plugin
+  - We also used **Vuex** for state management and **VueRouter** for route management
+- **Axios** and **Socket.IO** is used for requesting data from the backend
+- **Jitsi Meet Wrapper** is used to display streams
+
+### Backend
+
+---
+
+- **Nodejs** is used with **Express** for creating the server and handling requests from the frontend
+- **Axios** is used to handle request between the backend servers
+- **Bcrypt** and **JWT** is used for user authentication
+- **Mongoose** is used for database calls between the database and the server
+
+### Database
+
+---
+
+- We use **MongoDB** as the database for the streams, users and devices
+
 ## Installation
 
-### Frontend:
+### Prerequisites
+
+---
+
+We will need to install:
+
+- **Node.js**
+- **MongoDB** and **MongoDB Compass** (Compass is totally optional but recommended)
+- **Visual Studio Code** or any text editor of your choice
+
+### Next Steps
+
+---
+
+For both the Frontend and Backend, you will need to install necessary dependencies. Those dependencies can be installed with the **npm i** command.
+
+### Frontend
+
+---
 
 Run the command line terminal in the directory of the front end and run the following command
 
 ```sh
+npm i
 npm run serve
 ```
 
 ### Backend:
 
+---
+
 For the backend, it is a different story. **Classtime**'s backend relies on multiple modules so you will need to get into each folder individually and run the following command. Those folders are **Server**, **Chat**, and **Device**.
 
 ```sh
+npm i
 npm start
 ```
 
@@ -82,7 +132,9 @@ Here are the instructions on how to use this streaming service
 
 You can **login** by filling your email and password in the text fields and press login.
 
-**Registering** will give register you as a student account.
+**Registering** will register you with a student account.
+
+> _For lecturers and admins, please contact the development team or any admin to give you appropriate roles._
 
 ### Streaming
 
