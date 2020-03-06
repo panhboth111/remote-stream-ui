@@ -12,25 +12,37 @@
 import io from "socket.io-client";
 import OngoingStreams from "../components/HomePageComponents/OngoingStreams";
 import { URL } from "../../config";
+import { mapState } from "vuex";
 // I disabled these because it is not implemented as of right now
 
 // import PreviousVideos from "../components/HomePageComponents/PreviousVideos";
 // import CommunityVideos from "../components/HomePageComponents/CommunityVideos";
 
 export default {
-  props: {
-    user: Object
-  },
   components: {
     OngoingStreams
-    // PreviousVideos,
+    // PreviousVideos, 
     // CommunityVideos
   },
   data: () => {
     return {
-      socket: io(`http://${URL}:3001`)
+      socket: io(`http://${URL}:3001`),
+      user : {}
     };
   },
+  methods : {
+    async getUser() {
+      this.user = await this.$store.getters.user;
+      console.log(this.user)
+    },
+    computed: {
+      ...mapState(["user"])
+    }
+  },
+  created(){
+    this.getUser()
+  }
+
 };
 </script>
 
