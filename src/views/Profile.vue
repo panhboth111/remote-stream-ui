@@ -6,15 +6,9 @@
       <v-col cols="4">
         <p class="headline">Account</p>
         <v-card class="mx-auto my-4" justify-center height="370px">
-          <v-btn
-            absolute
-            small
-            right
-            class="mt-2 coverPicBtn"
-            @click="uploadCoverPic"
-          >
-            Upload Photo
-            <v-icon>mdi-upload</v-icon>
+          <v-btn absolute small right class="mt-2 coverPicBtn" @click="uploadCoverPic">
+            <div id="uploadText" style="display: none">Upload Cover</div>
+            <v-icon @mouseover="showUploadText" @mouseout="hideUploadText">mdi-upload</v-icon>
           </v-btn>
           <input
             type="file"
@@ -82,13 +76,7 @@
             </v-avatar>
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <p
-                  class="headline"
-                  v-on="on"
-                  @click="editUsernameDialog = true"
-                >
-                  {{ user.name }}
-                </p>
+                <p class="headline" v-on="on" @click="editUsernameDialog = true">{{ user.name }}</p>
               </template>
               <span>Change username</span>
             </v-tooltip>
@@ -103,12 +91,7 @@
         <v-row>
           <v-col v-for="(stream, i) in user.history" :key="i" :lg="6" :md="12">
             <v-card dark @click="myClickEvent">
-              <v-img
-                :src="coverPicURL"
-                class="white--text align-end"
-                height="240px"
-                alt="pic"
-              >
+              <v-img :src="coverPicURL" class="white--text align-end" height="240px" alt="pic">
                 <v-card-title v-text="stream.streamTitle"></v-card-title>
                 <v-card-subtitle v-text="stream.action"></v-card-subtitle>
               </v-img>
@@ -135,13 +118,9 @@
     </v-dialog>
     <v-dialog v-model="editProfileDialog" width="600px">
       <v-card>
-        <v-card-title>
-          Change your password
-        </v-card-title>
+        <v-card-title>Change your password</v-card-title>
         <v-card-text>
-          <v-text class="red--text">
-            {{errorMsg}}
-          </v-text>
+          <v-text class="red--text">{{errorMsg}}</v-text>
           <v-text-field
             label="Current password"
             type="password"
@@ -170,21 +149,10 @@
     </v-dialog>
     <v-dialog v-model="editUsernameDialog" width="600px">
       <v-card>
-        <v-card-title>
-          Change your username
-        </v-card-title>
+        <v-card-title>Change your username</v-card-title>
         <v-card-text>
-          <v-text-field
-            label="Username"
-            append-icon="mdi-account"
-            v-model="newName"
-          ></v-text-field>
-          <v-text-field
-            type="password"
-            label="Password"
-            append-icon="mdi-key"
-            v-model="password"
-          ></v-text-field>
+          <v-text-field label="Username" append-icon="mdi-account" v-model="newName"></v-text-field>
+          <v-text-field type="password" label="Password" append-icon="mdi-key" v-model="password"></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -213,7 +181,7 @@ export default {
       editProfileDialog: false,
       editUsernameDialog: false,
       changePassword: false,
-      password : "",
+      password: "",
       newName: "",
       currentPassword: "",
       newPassword: "",
@@ -224,6 +192,12 @@ export default {
     };
   },
   methods: {
+    showUploadText() {
+      document.getElementById("uploadText").style.display = "block";
+    },
+    hideUploadText() {
+      document.getElementById("uploadText").style.display = "none";
+    },
     getUser() {
       this.user = this.$store.getters.user;
     },
@@ -262,31 +236,34 @@ export default {
       });
     },
     async saveCredentials() {
-        if (this.currentPassword == "") {
-          this.errorMsg = "*Please Enter Your Current Password";
-        } else if (this.newPassword == "") {
-          this.errorMsg = "*Please Enter Your New Password";
-        }else if (this.newPassword != this.confirmPassword) {
-          this.errorMsg = "*The Passwords Do Not Match";
-        } else {
-          const result = await backend.changePassword(this.currentPassword,this.newPassword)
-          alert(result.data.message)
-          this.editProfileDialog = false;
-          this.changePassword = false;
-          this.errorMsg = "";
-        }
+      if (this.currentPassword == "") {
+        this.errorMsg = "*Please Enter Your Current Password";
+      } else if (this.newPassword == "") {
+        this.errorMsg = "*Please Enter Your New Password";
+      } else if (this.newPassword != this.confirmPassword) {
+        this.errorMsg = "*The Passwords Do Not Match";
+      } else {
+        const result = await backend.changePassword(
+          this.currentPassword,
+          this.newPassword
+        );
+        alert(result.data.message);
+        this.editProfileDialog = false;
+        this.changePassword = false;
+        this.errorMsg = "";
+      }
     },
-    async saveUser(){
-      if (this.newName == ""){
-        alert("Name can't be empty!")
-      }else if (this.password == ""){
-        alert("Password can't be empty")
-      }else if (this.password.length < 4){
-        alert("Password are 4 or more characters long..")
-      }else{
-        const result = await backend.changeName(this.newName,this.password)
-        alert(result.data.message)
-        this.editUsernameDialog = false
+    async saveUser() {
+      if (this.newName == "") {
+        alert("Name can't be empty!");
+      } else if (this.password == "") {
+        alert("Password can't be empty");
+      } else if (this.password.length < 4) {
+        alert("Password are 4 or more characters long..");
+      } else {
+        const result = await backend.changeName(this.newName, this.password);
+        alert(result.data.message);
+        this.editUsernameDialog = false;
         location.reload();
       }
     }
