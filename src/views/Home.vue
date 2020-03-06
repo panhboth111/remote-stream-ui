@@ -1,6 +1,6 @@
 <template>
   <div class="px-8 pb-8">
-    <OngoingStreams/>
+    <OngoingStreams />
 
     <!-- <PreviousVideos :videos="this.videos" />
 
@@ -30,7 +30,7 @@ export default {
     return {
       socket: io(`http://${URL}:3001`)
     };
-  },
+  }
 };
 </script>
 
