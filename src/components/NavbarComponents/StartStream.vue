@@ -331,7 +331,6 @@ export default {
 .thumbnail-preview {
   overflow: hidden;
   width: 200px;
-  height: auto;
   border-radius: 5px;
 }
 </style>
