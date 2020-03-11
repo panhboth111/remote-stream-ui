@@ -12,6 +12,8 @@ class Service {
       headers: { "auth-token": token }
     });
   }
+
+  // Retrieve User's History
   static getUserHistory() {
     const token = cookie.getCookie("auth-token"); //window.localStorage.getItem("auth-token")
     return axios.get(`${url}users/userHistory`, {
@@ -20,6 +22,7 @@ class Service {
     });
   }
 
+  // Change Cover
   static async changeCover(newCover) {
     const token = cookie.getCookie("auth-token");
     const response = await axios.post(
@@ -29,6 +32,8 @@ class Service {
     );
     return response.data;
   }
+
+  // ChangeProfile
   static async changeProfile(newProfile) {
     const token = cookie.getCookie("auth-token");
     const response = await axios.post(
@@ -61,8 +66,8 @@ class Service {
     );
   }
 
-    // Start Stream
-    static changePassword(password, newPassword) {
+  // Start Stream
+  static changePassword(password, newPassword) {
       const token = cookie.getCookie("auth-token");
       return axios.post(
         `${url}auth/changePassword`,
@@ -72,12 +77,13 @@ class Service {
           headers: { "auth-token": token }
         }
       );
-    }
+  }
 
   // Start Stream
   static startStream(
     streamTitle,
     description,
+    thumbnail,
     isPrivate,
     password,
     streamBy,
@@ -92,6 +98,7 @@ class Service {
       {
         streamTitle,
         description,
+        thumbnail,
         isPrivate,
         password,
         streamBy

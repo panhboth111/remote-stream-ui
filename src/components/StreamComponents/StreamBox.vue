@@ -27,7 +27,7 @@
                   <v-icon color="red lighten-2">mdi-eye</v-icon>
                 </div>
                 <div>
-                  <span class="red--text text--lighten-2">34</span>
+                    <span class="red--text text--lighten-2" id="viewCount">0</span>
                 </div>
                 <div class="ml-4">
                   <v-btn icon>
@@ -56,7 +56,7 @@
               </v-col>
               <v-col cols="11">
                 <span>
-                  <v-chip dark class="mr-2" v-for="tag in tags" :key="tag">
+                  <v-chip class="mr-2" v-for="tag in tags" :key="tag">
                     {{
                     tag
                     }}
@@ -89,6 +89,7 @@ export default {
   data() {
     return {
       api : null,
+      viewer: 0,
       hasLoaded: true,
       streamName: this.$route.params.streamName,
       streamTitle: "",
@@ -128,17 +129,31 @@ export default {
     async streamOn(streamCode,streamTitle){
         // eslint-disable-next-line no-unused-vars
         const {domain, options, role, name} = await backend.joinStream(streamCode,"")
-        this.api = null
-        $( document ).ready(function() {
+        $( document ).ready(async function() {
             options["parentNode"] = document.querySelector('#newStreamRoom');
-            this.api = new JitsiMeetExternalAPI(domain, options);
+            this.api = await new JitsiMeetExternalAPI(domain, options);
             this.api.executeCommand('displayName', name);
             this.api.executeCommand('subject', streamTitle);
             if (role != "Lecturer"){
               this.api.executeCommand('toggleVideo')
+              this.viewer = this.api.getNumberOfParticipants()
+              let viewBox = document.getElementById("viewCount")
+              viewBox.innerHTML = this.viewer
             }
+            this.api.on("participantJoined",(data)=>{
+              console.log(`New Comer : ${data.id} - ${data.displayName}`)
+              this.viewer = this.api.getNumberOfParticipants()
+              let viewBox = document.getElementById("viewCount")
+              viewBox.innerHTML = this.viewer
+            })
+            this.api.on("participantLeft",data => {
+              console.log(data)
+              this.viewer = this.api.getNumberOfParticipants()
+              let viewBox = document.getElementById("viewCount")
+              viewBox.innerHTML = this.viewer
+            })
         });
-    }
+    },
   }
 };
 

@@ -41,6 +41,7 @@ export default {
       this.streams = []
       if (streams.data) {
         streams.data.forEach(stream => {
+          console.log(stream)
           this.streams.push({
             id: stream.streamCode,
             title: stream.streamTitle,
@@ -48,7 +49,7 @@ export default {
             isPrivate: true,
             author: stream.ownerName,
             date: stream.date,
-            img_url: "http://kit8.net/images/detailed/4/data_centre.png"
+            img_url: stream.thumbnail
           });
         });
       }
