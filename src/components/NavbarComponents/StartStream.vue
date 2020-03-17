@@ -1,36 +1,26 @@
 <template>
   <div class="d-none d-sm-none d-md-flex">
-    <v-btn @click="create_stream = true" outlined id="startStreamBtn">
-      <v-icon left>mdi-record</v-icon>Go Live
-    </v-btn>
-    <v-dialog v-model="create_stream" max-width="770px">
+    <v-dialog v-model="create_stream" max-width="670px">
+      <template v-slot:activator="{ on }">
+        <v-btn v-on="on" outlined id="startStreamBtn">
+          <v-icon left>mdi-record</v-icon>Go Live
+        </v-btn>
+      </template>
+
       <v-card>
         <v-card-title>
           <span class="title font-weight-regular">Create stream</span>
         </v-card-title>
         <v-card-text>
-          <v-form ref="form" v-model="valid">
-            <v-card-text class="ma-0 pa-0 d-flex flex-row">
-              <v-text-field
-                id="title"
-                label="Title"
-                required
-                :rules="[v => !!v || 'Title is required']"
-                v-model="streamTitle"
-                class="mr-4"
-              ></v-text-field>
-              <v-btn @click="chooseThumbnail" outlined color="primary">
-                <v-icon class="mr-4">mdi-camera</v-icon>Custom Thumbnail
-              </v-btn>
-              <input
-                type="file"
-                accept="image/*"
-                ref="thumbnailInput"
-                style="display: none"
-                @change="onThumbnailPicked"
-              />
-            </v-card-text>
-
+          <v-form ref="form">
+            <!-- <v-text-field
+              id="streamTitleInput"
+              label="Title"
+              color="black"
+              required
+              v-model="streamTitle"
+            ></v-text-field>-->
+            <v-text-field id="title" label="Title" color="red" required v-model="streamTitle"></v-text-field>
             <v-text-field
               id="owner"
               label="owner"
@@ -39,13 +29,28 @@
               v-model="streamBy"
             ></v-text-field>
             <v-textarea
-              :rules="[v => !!v || 'Description is required']"
               outlined="outlined"
               id="descriptionInput"
               label="Description"
+              color="red"
               v-model="description"
               required
             ></v-textarea>
+
+            <v-btn @click="chooseThumbnail" outlined color="red">
+              <v-icon class="mr-4">mdi-camera</v-icon>Custom Thumbnail
+            </v-btn>
+            <input
+              type="file"
+              accept="image/*"
+              ref="thumbnailInput"
+              style="display: none"
+              @change="onThumbnailPicked"
+            />
+            <div class="float-right thumbnail-preview">
+              Thumbnail Preview:
+              <v-img :src="thumbnailURL" width="200px" height="100px"></v-img>
+            </div>
 
             <v-switch
               v-if="user.role !== 'Student'"
@@ -64,49 +69,20 @@
               v-model="is_private"
               label="Private stream"
             ></v-switch>
-            <v-text-field
-              label="Password"
-              color="black"
-              required
-              v-if="is_private"
-            ></v-text-field>
-            <v-card class="d-flex flex-column pa-0" flat>
-              <v-card-title class="body-1 font-weight-bold"
-                >Preview</v-card-title
-              >
-              <Thumbnail
-                class="align-self-center"
-                type="small"
-                :stream="{
-                  title: streamTitle,
-                  author: user.name,
-                  isPrivate: is_private,
-                  thumbnail: thumbnailURL,
-                  profile: user.profilePic,
-                  date: Date.now()
-                }"
-              />
-              <!-- <div>
-                Thumbnail Preview:
-                <v-img :src="thumbnailURL" width="200px" height="100px"></v-img>
-              </div> -->
-            </v-card>
+            <v-text-field label="Password" color="black" required v-if="is_private"></v-text-field>
           </v-form>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="black darken-1" text @click="create_stream = false"
-            >Cancel</v-btn
-          >
+          <v-btn color="black darken-1" text @click="create_stream = false">Cancel</v-btn>
           <v-btn
             text
             class="font-weight-black"
             v-if="is_from_webcam && user.role !== 'Student'"
             @click="select_classes = true"
-            :disabled="!valid"
-            >Continue</v-btn
-          >
+            :disabled="streamTitle === ''"
+          >Continue</v-btn>
           <v-btn
             v-else
             text
@@ -119,9 +95,8 @@
                 : (select_class = true)
             "
             id="startBtn"
-            :disabled="!valid"
-            >Continue</v-btn
-          >
+            :disabled="streamTitle === ''"
+          >Continue</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -143,17 +118,14 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="black darken-1" text @click="select_class = false"
-            >Cancel</v-btn
-          >
+          <v-btn color="black darken-1" text @click="select_class = false">Cancel</v-btn>
           <v-btn
             text
             @click="select_classes = true"
             class="font-weight-black"
             id="startStreamBtn"
             :disabled="selectedDevice === ''"
-            >Continue</v-btn
-          >
+          >Continue</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -179,17 +151,14 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="black darken-1" text @click="select_classes = false"
-            >Cancel</v-btn
-          >
+          <v-btn color="black darken-1" text @click="select_classes = false">Cancel</v-btn>
           <v-btn
             id="startBtn"
             color="black darken-1"
             class="font-weight-black"
             text
             @click="stream()"
-            >Continue</v-btn
-          >
+          >Continue</v-btn>
           <v-overlay :value="loading" v-if="devices">
             <v-progress-circular indeterminate size="100"></v-progress-circular>
           </v-overlay>
@@ -234,6 +203,13 @@ export default {
     userCurrentStream: "",
     thumbnailURL: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
   }),
+  watch: {
+    is_from_webcam(value) {
+      if (value == false) {
+        this.is_private = false;
+      }
+    }
+  },
   watch: {
     is_from_webcam(value) {
       if (value == false) {
@@ -360,7 +336,6 @@ export default {
 .thumbnail-preview {
   overflow: hidden;
   width: 200px;
-  height: auto;
   border-radius: 5px;
 }
 </style>

@@ -31,7 +31,7 @@
                   <v-icon color="red lighten-2">mdi-eye</v-icon>
                 </div>
                 <div>
-                  <span class="red--text text--lighten-2" id="viewCount">0</span>
+                    <span class="red--text text--lighten-2" id="viewCount">0</span>
                 </div>
                 <div class="ml-4">
                   <v-btn icon>
@@ -55,7 +55,21 @@
           <v-expansion-panel-content>
             <v-row>
               <v-col>
-                <p>{{ description }}</p>
+                <p>{{description}}</p>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="1">
+                <span class="subtitle-1">Tags:</span>
+              </v-col>
+              <v-col cols="11">
+                <span>
+                  <v-chip class="mr-2" v-for="tag in tags" :key="tag">
+                    {{
+                    tag
+                    }}
+                  </v-chip>
+                </span>
               </v-col>
             </v-row>
           </v-expansion-panel-content>
@@ -82,7 +96,8 @@ export default {
   // },
   data() {
     return {
-      api: null,
+      api : null,
+      viewer: 0,
       hasLoaded: true,
       streamName: this.$route.params.streamName,
       streamTitle: "",
@@ -112,37 +127,34 @@ export default {
         this.streamOn(streamDetail.data.streamCode, this.streamTitle);
       }
     },
-    async streamOn(streamCode, streamTitle) {
-      // eslint-disable-next-line no-unused-vars
-      const { domain, options, role, name } = await backend.joinStream(
-        streamCode,
-        ""
-      );
-      this.api = null;
-      $(document).ready(function() {
-        options["parentNode"] = document.querySelector("#newStreamRoom");
-        this.api = new JitsiMeetExternalAPI(domain, options);
-        this.api.executeCommand("displayName", name);
-        this.api.executeCommand("subject", streamTitle);
-        if (role != "Lecturer") {
-          this.api.executeCommand("toggleVideo");
-        }
-        // Count when a user join
-        this.api.on("participantJoined",(data) => {
-          console.log(`New Comer - ${data.displayName} : ${data.id}`)
-          this.viewCount = this.api.getNumberOfParticipants()
-          let viewBox = document.getElementById("viewCount")
-          viewBox.innerHTML = this.viewCount
-        })
-        // Count when a user left
-        this.api.on("participantLeft",(data) => {
-          console.log(`User left - ${data.displayName} : ${data.id}`)
-          this.viewCount = this.api.getNumberOfParticipants()
-          let viewBox = document.getElementById("viewCount")
-          viewBox.innerHTML = this.viewCount
-        })
-      });
-    }
+    async streamOn(streamCode,streamTitle){
+        // eslint-disable-next-line no-unused-vars
+        const {domain, options, role, name} = await backend.joinStream(streamCode,"")
+        $( document ).ready(async function() {
+            options["parentNode"] = document.querySelector('#newStreamRoom');
+            this.api = await new JitsiMeetExternalAPI(domain, options);
+            this.api.executeCommand('displayName', name);
+            this.api.executeCommand('subject', streamTitle);
+            if (role != "Lecturer"){
+              this.api.executeCommand('toggleVideo')
+              this.viewer = this.api.getNumberOfParticipants()
+              let viewBox = document.getElementById("viewCount")
+              viewBox.innerHTML = this.viewer
+            }
+            this.api.on("participantJoined",(data)=>{
+              console.log(`New Comer : ${data.id} - ${data.displayName}`)
+              this.viewer = this.api.getNumberOfParticipants()
+              let viewBox = document.getElementById("viewCount")
+              viewBox.innerHTML = this.viewer
+            })
+            this.api.on("participantLeft",data => {
+              console.log(data)
+              this.viewer = this.api.getNumberOfParticipants()
+              let viewBox = document.getElementById("viewCount")
+              viewBox.innerHTML = this.viewer
+            })
+        });
+    },
   }
 };
 </script>
