@@ -1,58 +1,65 @@
 <template>
-  <div>
-    <v-row class="mt-8 mb-3">
-      <h1 class="title">
-        <span class="font-weight-regular">Ongoing</span>
-        streams
-      </h1>
+  <v-card flat class="transparent">
+    <v-card-title
+      >Ongoing streams
       <v-spacer></v-spacer>
-      <v-btn text small @click="getcurrentlyStreaming()">Refresh</v-btn>
-    </v-row>
-    <v-row>
-      <v-col v-for="stream in streams" :key="stream.id" :lg="4" :md="6" :xs="12">
-        <v-card
-          dark
-          :to="`/stream/${stream.id}`"
-          :id="`${stream.id}`"
-          :ref="`${stream.title}`"
-          @click="myClickEvent"
-        >
-          <v-img :src="stream.img_url" class="white--text align-end" height="240px">
-            <v-card-title v-text="stream.title"></v-card-title>
-            <v-card-subtitle v-text="stream.author"></v-card-subtitle>
-          </v-img>
-        </v-card>
-      </v-col>
-    </v-row>
-  </div>
+      <v-btn text small @click="getcurrentlyStreaming(6)" outlined
+        >Refresh</v-btn
+      >
+    </v-card-title>
+    <v-sheet class="mx-auto transparent" max-width="900px">
+      <v-slide-group>
+        <v-slide-item v-for="stream in streams" :key="stream.id">
+          <Thumbnail
+            type="large"
+            :stream="stream"
+            :id="stream.id"
+            v-if="$vuetify.breakpoint.mdAndUp"
+          />
+          <Thumbnail type="mobile" :stream="stream" v-else />
+        </v-slide-item>
+      </v-slide-group>
+    </v-sheet>
+  </v-card>
 </template>
 
 <script>
+import Thumbnail from "../Reusables/Thumbnail";
+
+import backend from "../../Service";
 export default {
-  props: {
-    streams: Object
+  data: () => {
+    return {
+      streams: []
+    };
   },
-    methods: {
+  components: {
+    Thumbnail
+  },
+  methods: {
     async getcurrentlyStreaming(limit) {
       const streams = await backend.getCurrentlyStreaming(limit, true);
-      console.log(streams.data);
+      this.streams = [];
       if (streams.data) {
         streams.data.forEach(stream => {
           this.streams.push({
             id: stream.streamCode,
             title: stream.streamTitle,
             description: stream.description,
-            isPrivate: true,
-            author: stream.ownerName,
+            isPrivate: stream.isPrivate,
+            author: stream.owner.name,
+            profile: stream.owner.profilePic,
             date: stream.date,
-            img_url: "http://kit8.net/images/detailed/4/data_centre.png"
+            thumbnail: stream.thumbnail
           });
         });
       }
     }
+  },
+  created() {
+    this.getcurrentlyStreaming(6);
   }
 };
 </script>
 
-<style>
-</style>
+<style></style>

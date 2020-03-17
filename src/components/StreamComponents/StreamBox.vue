@@ -3,12 +3,16 @@
     <div id="newStreamRoom" class="stream">
       <v-card v-if="!hasLoaded" class="loading-message" flat color="#000000">
         <v-row justify="space-around">
-          <v-card-title
-            class="header justify-space-around white--text"
-          >The stream is loading. Please wait...</v-card-title>
+          <v-card-title class="header justify-space-around white--text"
+            >The stream is loading. Please wait...</v-card-title
+          >
         </v-row>
         <v-row justify="space-around">
-          <v-progress-circular indeterminate class="mb-6" color="white"></v-progress-circular>
+          <v-progress-circular
+            indeterminate
+            class="mb-6"
+            color="white"
+          ></v-progress-circular>
         </v-row>
       </v-card>
     </div>
@@ -19,15 +23,15 @@
           <v-container>
             <v-row class="px-3">
               <v-col cols="10" class="text-left">
-                <div class="headline">{{streamTitle}}</div>
-                <div class="body-2 font-weight-light">{{author}}</div>
+                <div class="headline font-weight-bold">{{ streamTitle }}</div>
+                <div class="subtitle-2 font-weight-light">{{ author }}</div>
               </v-col>
               <v-col cols="2" class="d-flex justify-end align-center">
                 <div class="mx-2">
                   <v-icon color="red lighten-2">mdi-eye</v-icon>
                 </div>
                 <div>
-                  <span class="red--text text--lighten-2">34</span>
+                  <span class="red--text text--lighten-2" id="viewCount">0</span>
                 </div>
                 <div class="ml-4">
                   <v-btn icon>
@@ -42,26 +46,16 @@
 
           <v-expansion-panel-header>
             <!-- <div class="link">Show Details</div> -->
-            <span class="overline">Show description</span>
+            <span
+              class="subtitle-2 text-uppercase font-weight-bold"
+              style="letter-spacing:0.15em"
+              >Show description</span
+            >
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-row>
               <v-col>
-                <p>{{description}}</p>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="1">
-                <span class="subtitle-1">Tags:</span>
-              </v-col>
-              <v-col cols="11">
-                <span>
-                  <v-chip dark class="mr-2" v-for="tag in tags" :key="tag">
-                    {{
-                    tag
-                    }}
-                  </v-chip>
-                </span>
+                <p>{{ description }}</p>
               </v-col>
             </v-row>
           </v-expansion-panel-content>
@@ -88,26 +82,19 @@ export default {
   // },
   data() {
     return {
-      api : null,
+      api: null,
       hasLoaded: true,
       streamName: this.$route.params.streamName,
       streamTitle: "",
       description: "",
       author: "",
-      tags: [
-        "#web-apps",
-        "#design-patterns",
-        "#batch6",
-        "#html",
-        "#batch8",
-        "#batch7"
-      ]
+      viewCount : 0
     };
   },
   async created() {
-    this.getStreamDetails()
+    this.getStreamDetails();
   },
-  destroyed(){
+  destroyed() {
     console.log("stopping.......");
     backend.stopStream();
     // this.socket.emit('stop',this.user.email)
@@ -122,26 +109,42 @@ export default {
         this.streamTitle = streamDetail.data.streamTitle;
         this.author = streamDetail.data.ownerName;
         this.description = streamDetail.data.description;
-        this.streamOn(streamDetail.data.streamCode,this.streamTitle);
+        this.streamOn(streamDetail.data.streamCode, this.streamTitle);
       }
     },
-    async streamOn(streamCode,streamTitle){
-        // eslint-disable-next-line no-unused-vars
-        const {domain, options, role, name} = await backend.joinStream(streamCode,"")
-        this.api = null
-        $( document ).ready(function() {
-            options["parentNode"] = document.querySelector('#newStreamRoom');
-            this.api = new JitsiMeetExternalAPI(domain, options);
-            this.api.executeCommand('displayName', name);
-            this.api.executeCommand('subject', streamTitle);
-            if (role != "Lecturer"){
-              this.api.executeCommand('toggleVideo')
-            }
-        });
+    async streamOn(streamCode, streamTitle) {
+      // eslint-disable-next-line no-unused-vars
+      const { domain, options, role, name } = await backend.joinStream(
+        streamCode,
+        ""
+      );
+      this.api = null;
+      $(document).ready(function() {
+        options["parentNode"] = document.querySelector("#newStreamRoom");
+        this.api = new JitsiMeetExternalAPI(domain, options);
+        this.api.executeCommand("displayName", name);
+        this.api.executeCommand("subject", streamTitle);
+        if (role != "Lecturer") {
+          this.api.executeCommand("toggleVideo");
+        }
+        // Count when a user join
+        this.api.on("participantJoined",(data) => {
+          console.log(`New Comer - ${data.displayName} : ${data.id}`)
+          this.viewCount = this.api.getNumberOfParticipants()
+          let viewBox = document.getElementById("viewCount")
+          viewBox.innerHTML = this.viewCount
+        })
+        // Count when a user left
+        this.api.on("participantLeft",(data) => {
+          console.log(`User left - ${data.displayName} : ${data.id}`)
+          this.viewCount = this.api.getNumberOfParticipants()
+          let viewBox = document.getElementById("viewCount")
+          viewBox.innerHTML = this.viewCount
+        })
+      });
     }
   }
 };
-
 </script>
 
 <style scoped>

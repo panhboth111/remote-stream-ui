@@ -1,32 +1,36 @@
 <template>
-  <div>
-    <v-dialog v-model="create_stream" max-width="670px">
-      <template v-slot:activator="{ on }">
-        <v-btn v-on="on" outlined id="startStreamBtn">
-          <v-icon left>mdi-record</v-icon>Go Live
-        </v-btn>
-      </template>
-
+  <div class="d-none d-sm-none d-md-flex">
+    <v-btn @click="create_stream = true" outlined id="startStreamBtn">
+      <v-icon left>mdi-record</v-icon>Go Live
+    </v-btn>
+    <v-dialog v-model="create_stream" max-width="770px">
       <v-card>
         <v-card-title>
           <span class="title font-weight-regular">Create stream</span>
         </v-card-title>
         <v-card-text>
-          <v-form ref="form">
-            <!-- <v-text-field
-              id="streamTitleInput"
-              label="Title"
-              color="black"
-              required
-              v-model="streamTitle"
-            ></v-text-field> -->
-            <v-text-field
-              id="title"
-              label="Title"
-              color="black"
-              required
-              v-model="streamTitle"
-            ></v-text-field>
+          <v-form ref="form" v-model="valid">
+            <v-card-text class="ma-0 pa-0 d-flex flex-row">
+              <v-text-field
+                id="title"
+                label="Title"
+                required
+                :rules="[v => !!v || 'Title is required']"
+                v-model="streamTitle"
+                class="mr-4"
+              ></v-text-field>
+              <v-btn @click="chooseThumbnail" outlined color="primary">
+                <v-icon class="mr-4">mdi-camera</v-icon>Custom Thumbnail
+              </v-btn>
+              <input
+                type="file"
+                accept="image/*"
+                ref="thumbnailInput"
+                style="display: none"
+                @change="onThumbnailPicked"
+              />
+            </v-card-text>
+
             <v-text-field
               id="owner"
               label="owner"
@@ -34,19 +38,20 @@
               v-if="user.role === 'Device'"
               v-model="streamBy"
             ></v-text-field>
-            <v-text-field
+            <v-textarea
+              :rules="[v => !!v || 'Description is required']"
+              outlined="outlined"
               id="descriptionInput"
               label="Description"
-              color="black"
               v-model="description"
               required
-            ></v-text-field>
+            ></v-textarea>
 
             <v-switch
               v-if="user.role !== 'Student'"
               class="pa-0"
               dense
-              color="grey darken-2"
+              color="red darken-2"
               v-model="is_from_webcam"
               label="From your webcam"
             ></v-switch>
@@ -55,7 +60,7 @@
               id="isPrivateToggle"
               class="pa-0 mt-5"
               dense
-              color="grey darken-2"
+              color="red darken-2"
               v-model="is_private"
               label="Private stream"
             ></v-switch>
@@ -65,8 +70,30 @@
               required
               v-if="is_private"
             ></v-text-field>
+            <v-card class="d-flex flex-column pa-0" flat>
+              <v-card-title class="body-1 font-weight-bold"
+                >Preview</v-card-title
+              >
+              <Thumbnail
+                class="align-self-center"
+                type="small"
+                :stream="{
+                  title: streamTitle,
+                  author: user.name,
+                  isPrivate: is_private,
+                  thumbnail: thumbnailURL,
+                  profile: user.profilePic,
+                  date: Date.now()
+                }"
+              />
+              <!-- <div>
+                Thumbnail Preview:
+                <v-img :src="thumbnailURL" width="200px" height="100px"></v-img>
+              </div> -->
+            </v-card>
           </v-form>
         </v-card-text>
+
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="black darken-1" text @click="create_stream = false"
@@ -77,13 +104,12 @@
             class="font-weight-black"
             v-if="is_from_webcam && user.role !== 'Student'"
             @click="select_classes = true"
-            :disabled="streamTitle === ''"
+            :disabled="!valid"
             >Continue</v-btn
           >
           <v-btn
             v-else
             text
-            v-on="on"
             class="font-weight-black"
             @click="
               user.role === 'Student' ||
@@ -93,7 +119,7 @@
                 : (select_class = true)
             "
             id="startBtn"
-            :disabled="streamTitle === ''"
+            :disabled="!valid"
             >Continue</v-btn
           >
         </v-card-actions>
@@ -178,33 +204,24 @@ import backend from "../../Service";
 import io from "socket.io-client";
 import { URL } from "../../../config";
 
+import Thumbnail from "../Reusables/Thumbnail";
+
 export default {
+  components: {
+    Thumbnail
+  },
   data: () => ({
+    valid: false,
+    user: {},
     loading: false,
     devices: [],
     socket: io(`${URL}:3001`),
     selectedDevice: "",
-    tag_list: [],
     create_stream: false,
-    tags: [
-      "#web-apps",
-      "#design-patterns",
-      "#batch6",
-      "#html",
-      "#batch8",
-      "#batch7"
-    ],
     value: false,
     select_class: false,
     select_classes: false,
-    classes_cast: [
-      { name: "KIT Campus I - Classroom 1", value: false },
-      { name: "KIT Campus I - Classroom 2", value: false },
-      { name: "KIT Campus I - Classroom 3", value: false },
-      { name: "KIT Campus II - Classroom 1", value: false },
-      { name: "KIT Campus II - Classroom 2", value: false },
-      { name: "KIT Campus II - Classroom 3", value: false }
-    ],
+    classes_cast: [],
     is_conference: false,
     is_private: false,
     streamTitle: "",
@@ -214,12 +231,30 @@ export default {
     deviceNames: [],
     streamingUser: "",
     streamBy: "",
-    userCurrentStream: ""
+    userCurrentStream: "",
+    thumbnailURL: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
   }),
-  props: {
-    user: Object
+  watch: {
+    is_from_webcam(value) {
+      if (value == false) {
+        this.is_private = false;
+      }
+    }
   },
   methods: {
+    chooseThumbnail() {
+      this.$refs.thumbnailInput.click();
+    },
+    onThumbnailPicked(event) {
+      const files = event.target.files;
+      const selectedFile = files[0];
+
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(selectedFile);
+      fileReader.addEventListener("load", () => {
+        this.thumbnailURL = fileReader.result;
+      });
+    },
     stream() {
       const selectedClasses = this.devices.filter(x => x["value"] == true);
       if (this.is_from_webcam) {
@@ -240,6 +275,7 @@ export default {
       const stream = await backend.startStream(
         this.streamTitle,
         this.description,
+        this.thumbnailURL,
         this.is_private,
         this.password,
         this.streamBy,
@@ -304,6 +340,9 @@ export default {
     this.getAvailableDevices();
     this.devices.forEach(x => (x["value"] = true));
     this.streamingUser = this.user.name;
+  },
+  mounted() {
+    this.user = this.$store.getters.user;
   }
 };
 </script>
@@ -316,5 +355,12 @@ export default {
 .checkboxes_overflow {
   max-height: 200px;
   overflow: auto;
+}
+
+.thumbnail-preview {
+  overflow: hidden;
+  width: 200px;
+  height: auto;
+  border-radius: 5px;
 }
 </style>

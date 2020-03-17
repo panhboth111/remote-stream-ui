@@ -1,6 +1,11 @@
 <template>
   <v-card flat width="600">
-    <v-tabs background-color="transparent" centered color="black" class="mb-5">
+    <v-tabs
+      background-color="transparent"
+      centered
+      color="primary"
+      class="mb-5"
+    >
       <v-tab v-for="item in items" :key="item">
         <div style="width: 100px">{{ item }}</div>
       </v-tab>
@@ -40,5 +45,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

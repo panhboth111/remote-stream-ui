@@ -1,24 +1,35 @@
 <template>
-  <div class="px-8 pb-8">
-    <OngoingStreams :streams="this.streams" />
+  <v-container class="py-12">
+    <OngoingStreams />
+  </v-container>
 
-    <!-- <PreviousVideos :videos="this.videos" />
+  <!-- <PreviousVideos :videos="this.videos" />
 
     <CommunityVideos :videos="this.videos" />-->
-  </div>
 </template>
 
 <script>
-import backend from "../Service";
 import io from "socket.io-client";
 import OngoingStreams from "../components/HomePageComponents/OngoingStreams";
 import { URL } from "../../config";
+
 // I disabled these because it is not implemented as of right now
 
 // import PreviousVideos from "../components/HomePageComponents/PreviousVideos";
 // import CommunityVideos from "../components/HomePageComponents/CommunityVideos";
 
 export default {
+  data: () => ({
+    socket: io(`http://${URL}:3001`),
+    temp: {
+      title: "Introduction to Design Patterns",
+      img_url:
+        "https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80",
+      author: "Ly Chunvira",
+      isPrivate: false,
+      date: "10/10/2010"
+    }
+  }),
   props: {
     user: Object
   },
@@ -27,34 +38,14 @@ export default {
     // PreviousVideos,
     // CommunityVideos
   },
-  data: () => {
-    return {
-      socket: io(`http://${URL}:3001`),
-      streams: []
-
-    };
-  },
   methods: {
-    async getcurrentlyStreaming(limit) {
-      const streams = await backend.getCurrentlyStreaming(limit, true);
-      console.log(streams.data);
-      if (streams.data) {
-        streams.data.forEach(stream => {
-          this.streams.push({
-            id: stream.streamCode,
-            title: stream.streamTitle,
-            description: stream.description,
-            isPrivate: true,
-            author: stream.ownerName,
-            date: stream.date,
-            img_url: "http://kit8.net/images/detailed/4/data_centre.png"
-          });
-        });
-      }
+    async getUser() {
+      await this.$store.dispatch(getUserInfo);
+      this.user = this.$store.getters.user;
     }
   },
-  created() {
-    this.getcurrentlyStreaming(6, true);
+  mounted() {
+    this.getUser();
   }
 };
 </script>

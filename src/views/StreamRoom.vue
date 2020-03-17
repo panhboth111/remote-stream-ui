@@ -18,8 +18,8 @@
 				</td>
 			</tr>
   </v-simple-table>-->
-  <v-card class="mx-2">
-    <v-row>
+  <v-card class="mx-2 transparent" flat>
+    <v-row v-if="$vuetify.breakpoint.lgAndUp">
       <v-col cols="9">
         <StreamBox />
       </v-col>
@@ -27,6 +27,10 @@
         <ChatBox :user="user" />
       </v-col>
     </v-row>
+    <v-card class="text-center transparent my-10" flat v-else>
+      <h1 class="title font-weight-bold">Your device is not supported</h1>
+      <p>You can only view streams from <strong>Personal Computers</strong>.</p>
+    </v-card>
   </v-card>
 </template>
 

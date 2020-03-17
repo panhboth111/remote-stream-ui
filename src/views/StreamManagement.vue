@@ -1,35 +1,70 @@
 <template>
-  <v-container>
-    <v-row class="ml-1 mt-8 mb-10">
-      <h1 class="display-1">Stream Management</h1>
-      <v-spacer></v-spacer>
-      <v-btn text small @click="refresh()">Refresh</v-btn>
-    </v-row>
-    <v-data-table :items="streams" :headers="streamHeaders" class="elevation-1">
-      <template v-slot:item="props">
-        <tr>
-          <td @click="onStreamClick(props.item)">{{ props.item.streamCode }}</td>
-          <td @click="onStreamClick(props.item)">{{ props.item.streamTitle }}</td>
-          <td @click="onStreamClick(props.item)">{{ props.item.ownerName }}</td>
-          <td @click="onStreamClick(props.item)">{{ props.item.description }}</td>
-          <td @click="onStreamClick(props.item)">{{ props.item.streamFrom }}</td>
-          <td @click="onStreamClick(props.item)" :class="props.item.isActive ? 'red--text' : 'blue--text'">
-            {{ props.item.isActive ? "LIVE" : "ENDED" }}
-          </td>
-          <td>
-            <v-btn
-              outlined
-              v-if="props.item.isActive"
-              class="red white--text"
-              id="stopStreamBtn"
-              @click="stopStream(props.item.streamCode, props.item.owner)"
+  <v-container class="py-12">
+    <v-card flat class="transparent" width="100%" v-if="user.role === 'Admin'">
+      <v-card-title class="title font-weight-bold">
+        Stream Management
+        <v-spacer></v-spacer>
+        <v-text-field
+          class="mx-5"
+          label="Search"
+          v-model="searchStream"
+          append-icon="mdi-magnify"
+        ></v-text-field>
+        <v-btn small outlined @click="refresh">
+          <v-icon small left>mdi-reload</v-icon>
+          Refresh
+        </v-btn>
+      </v-card-title>
+      <v-data-table
+        class="transparent"
+        :items="streams"
+        :headers="streamHeaders"
+        :search="searchStream"
+      >
+        <template v-slot:item="props">
+          <tr>
+            <td @click="onStreamClick(props.item)">
+              {{ props.item.streamCode }}
+            </td>
+            <td @click="onStreamClick(props.item)">
+              {{ props.item.streamTitle }}
+            </td>
+            <td @click="onStreamClick(props.item)">
+              {{ props.item.owner.name }}
+            </td>
+            <td @click="onStreamClick(props.item)">
+              {{ props.item.description }}
+            </td>
+            <td @click="onStreamClick(props.item)">
+              {{ props.item.streamFrom }}
+            </td>
+            <td
+              @click="onStreamClick(props.item)"
+              :class="props.item.isActive ? 'red--text' : 'blue--text'"
             >
-              <v-icon left>mdi-record</v-icon>Stop Stream
-            </v-btn>
-          </td>
-        </tr>
-      </template>
-    </v-data-table>
+              {{ props.item.isActive ? "LIVE" : "ENDED" }}
+            </td>
+            <td>
+              <v-btn
+                outlined
+                v-if="props.item.isActive"
+                class="red white--text"
+                id="stopStreamBtn"
+                @click="stopStream(props.item.streamCode)"
+              >
+                <v-icon left>mdi-record</v-icon>Stop Stream
+              </v-btn>
+            </td>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-card>
+
+    <v-card class="text-center transparent" flat v-else>
+      <h1 class="title font-weight-bold">Unauthorized access</h1>
+      <p>This route is for <strong>Admininstrators</strong> only.</p>
+    </v-card>
+
     <v-dialog v-model="editStreamModal" max-width="600px">
       <v-card>
         <v-card-title>Edit a stream</v-card-title>
@@ -59,7 +94,8 @@ import { URL } from "../../config";
 export default {
   data: () => ({
     //socket: io(`https://${URL}`),
-   socket2: io(`${URL}:3000`),
+    socket2: io(`${URL}:3000`),
+    searchStream: "",
     streamCode: "",
     streamTitle: "",
     description: "",
@@ -67,11 +103,11 @@ export default {
     streamHeaders: [
       { text: "Stream Code", value: "streamCode" },
       { text: "Title", value: "streamTitle" },
-      { text: "Author", value: "streamAuthor" },
+      { text: "Author", value: "ownerName" },
       { text: "Description", value: "description" },
-      { text: "From", value: "from" },
-      { text: "Status", value: "status" },
-      { text: "Stop Stream", value: "Stop Stream" }
+      { text: "From", value: "streamFrom" },
+      { text: "Status", value: "isActive" },
+      { text: "Stop Stream" }
     ],
     streams: [],
     user: {}
@@ -104,15 +140,13 @@ export default {
       }
     },
     async getAllStreams() {
-      const streams = await backend.getCurrentlyStreaming(6, null);
-
+      const streams = await backend.getCurrentlyStreaming(0, null);
+      this.streams = [];
       this.streams = streams.data;
-      console.log(this.streams);
     },
-    async stopStream(streamCode, email) {
+    async stopStream(streamCode) {
       this.editStreamModal = false;
       //this.socket.emit("stop", email);
-      console.log(email);
       await backend.stopStream("admin", streamCode);
       this.socket2.emit("streamStop", streamCode);
       this.getAllStreams();
@@ -120,8 +154,8 @@ export default {
     getUser() {
       this.user = this.$store.getters.user;
     },
-    async refresh(){
-      this.getAllStreams()
+    async refresh() {
+      this.getAllStreams();
     }
   },
   created() {

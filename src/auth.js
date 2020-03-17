@@ -7,7 +7,10 @@ function auth() {
       window.location.replace("/home");
     }
   } else {
-    if (window.location.pathname != "/" && window.location.pathname != '/device-login') {
+    if (
+      window.location.pathname != "/" &&
+      window.location.pathname != "/device-login"
+    ) {
       window.location.replace("/");
     }
   }

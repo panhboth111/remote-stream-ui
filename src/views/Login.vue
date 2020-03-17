@@ -24,10 +24,10 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  background: url("https://images.unsplash.com/photo-1555099962-4199c345e5dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80")
+  background: url("https://images.unsplash.com/photo-1535982330050-f1c2fb79ff78?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1267&q=80")
     no-repeat center center;
   background-size: cover;
-  filter: blur(8px);
-  -webkit-filter: blur(8px);
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
 }
 </style>

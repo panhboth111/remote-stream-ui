@@ -5,14 +5,24 @@
         $route.name !== 'login' && $route.name !== 'device-login' && isLoaded
       "
     />
+    <NavDrawer
+      :user="user"
+      v-if="
+        $route.name !== 'login' && $route.name !== 'device-login' && isLoaded
+      "
+    />
     <v-content>
       <router-view :user="user" v-if="isLoaded"></router-view>
     </v-content>
+    <Footer class="mt-10" v-if="$route.name !== 'login'" />
   </v-app>
 </template>
 
 <script>
-import Navbar from "./components/NavbarComponents/Navbar";
+import Navbar from "./layouts/Navbar";
+import NavDrawer from "./layouts/NavDrawer";
+import Footer from "./layouts/Footer";
+
 // import backend from "./Service";
 import auth from "./auth";
 import synclog from "./synclog";
@@ -40,7 +50,9 @@ export default {
     }
   },
   components: {
-    Navbar
+    Navbar,
+    NavDrawer,
+    Footer
   },
   // computed: {
   //   ...mapState(["user"])
