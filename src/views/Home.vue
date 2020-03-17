@@ -1,6 +1,7 @@
 <template>
-  <div class="px-8 pb-8">
-    <OngoingStreams/>
+  <v-container class="py-12">
+    <OngoingStreams />
+  </v-container>
 
   <!-- <PreviousVideos :videos="this.videos" />
 
@@ -11,37 +12,41 @@
 import io from "socket.io-client";
 import OngoingStreams from "../components/HomePageComponents/OngoingStreams";
 import { URL } from "../../config";
-import { mapState } from "vuex";
+
 // I disabled these because it is not implemented as of right now
 
 // import PreviousVideos from "../components/HomePageComponents/PreviousVideos";
 // import CommunityVideos from "../components/HomePageComponents/CommunityVideos";
 
 export default {
+  data: () => ({
+    socket: io(`http://${URL}:3001`),
+    temp: {
+      title: "Introduction to Design Patterns",
+      img_url:
+        "https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80",
+      author: "Ly Chunvira",
+      isPrivate: false,
+      date: "10/10/2010"
+    }
+  }),
+  props: {
+    user: Object
+  },
   components: {
     OngoingStreams
-    // PreviousVideos, 
+    // PreviousVideos,
     // CommunityVideos
   },
-  data: () => {
-    return {
-      socket: io(`http://${URL}:3001`),
-      user : {}
-    };
-  },
-  methods : {
+  methods: {
     async getUser() {
-      this.user = await this.$store.getters.user;
-      console.log(this.user)
-    },
-    computed: {
-      ...mapState(["user"])
+      await this.$store.dispatch(getUserInfo);
+      this.user = this.$store.getters.user;
     }
   },
-  created(){
-    this.getUser()
+  mounted() {
+    this.getUser();
   }
-
 };
 </script>
 
