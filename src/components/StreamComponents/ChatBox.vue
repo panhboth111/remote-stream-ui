@@ -133,7 +133,7 @@
 import io from "socket.io-client";
 import backend from "../../Service";
 import emojis from "emojis";
-import { URL } from "../../../config";
+import { URL, CHAT_PORT } from "../../../config";
 // import emojiCo from "emoji-js"
 // import axios from 'axios'
 export default {
@@ -141,7 +141,7 @@ export default {
   data() {
     return {
       username: "",
-      socket: io(`${URL}:4000`),
+      socket: io(`${URL}:${CHAT_PORT}`),
       users: [],
       msg: "",
       tab: null,

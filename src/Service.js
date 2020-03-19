@@ -1,7 +1,7 @@
 import axios from "axios";
 import cookie from "./cookie";
-import { URL } from "../config";
-const url = `http://${URL}:3000/`;
+import { URL, SERVER_PORT } from "../config";
+const url = `http://${URL}:${SERVER_PORT}/`;
 
 class Service {
   // Get UserInfo

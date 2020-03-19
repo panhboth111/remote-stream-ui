@@ -40,14 +40,14 @@ import StartStream from "../components/NavbarComponents/StartStream";
 import auth from "../auth";
 import backend from "../Service";
 import io from "socket.io-client";
-import { URL } from "../../config";
+import { URL, SERVER_PORT } from "../../config";
 // import { mapState } from "vuex";
 
 export default {
   data: () => {
     return {
       socket: io(`${URL}:3001`),
-      socket2: io(`${URL}:3000`),
+      socket2: io(`${URL}:${SERVER_PORT}`),
       items: [
         { text: "Home", route: "/home" },
         { text: "Device Manager", route: "/devices" },

@@ -90,11 +90,11 @@
 <script>
 import backend from "../Service";
 import io from "socket.io-client";
-import { URL } from "../../config";
+import { URL, SERVER_PORT } from "../../config";
 export default {
   data: () => ({
     //socket: io(`https://${URL}`),
-    socket2: io(`${URL}:3000`),
+    socket2: io(`${URL}:${SERVER_PORT}`),
     searchStream: "",
     streamCode: "",
     streamTitle: "",
