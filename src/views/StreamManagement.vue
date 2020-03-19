@@ -90,11 +90,11 @@
 <script>
 import backend from "../Service";
 import io from "socket.io-client";
-import { URL, SERVER_PORT } from "../../config";
+const SERVER = process.env.VUE_APP_SERVER;
 export default {
   data: () => ({
     //socket: io(`https://${URL}`),
-    socket2: io(`${URL}:${SERVER_PORT}`),
+    socket2: io(SERVER),
     searchStream: "",
     streamCode: "",
     streamTitle: "",

@@ -11,7 +11,7 @@
 <script>
 import io from "socket.io-client";
 import OngoingStreams from "../components/HomePageComponents/OngoingStreams";
-import { URL } from "../../config";
+const DEVICE_SERVER = process.env.VUE_APP_DEVICE_SERVER;
 
 // I disabled these because it is not implemented as of right now
 
@@ -20,7 +20,7 @@ import { URL } from "../../config";
 
 export default {
   data: () => ({
-    socket: io(`http://${URL}:3001`),
+    socket: io(DEVICE_SERVER),
     temp: {
       title: "Introduction to Design Patterns",
       img_url:

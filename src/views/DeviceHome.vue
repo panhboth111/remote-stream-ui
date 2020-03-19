@@ -9,12 +9,12 @@
 <script>
 import backend from "../Service";
 import io from "socket.io-client";
-import {URL} from '../../config'
+const DEVICE_SERVER = process.env.VUE_APP_DEVICE_SERVER;
 export default {
   name: "device-home",
   data: () => {
     return {
-      socket: io(`http://${URL}:3001`),
+      socket: io(DEVICE_SERVER),
       streams: []
     };
   },
