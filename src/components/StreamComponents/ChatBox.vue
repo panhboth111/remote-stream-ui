@@ -133,15 +133,13 @@
 import io from "socket.io-client";
 import backend from "../../Service";
 import emojis from "emojis";
-import { URL, CHAT_PORT } from "../../../config";
-// import emojiCo from "emoji-js"
-// import axios from 'axios'
+const CHAT_SERVER = process.env.VUE_APP_CHAT_SERVER;
 export default {
   name: "chatbox",
   data() {
     return {
       username: "",
-      socket: io(`${URL}:${CHAT_PORT}`),
+      socket: io(CHAT_SERVER),
       users: [],
       msg: "",
       tab: null,
@@ -189,8 +187,6 @@ export default {
         if (announcement != undefined) {
           this.announcement = announcement;
         }
-        // console.log(chats)
-        console.log(this.chats);
       });
     },
     sendMessage() {

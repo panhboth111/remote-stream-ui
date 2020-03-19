@@ -1,13 +1,14 @@
 import axios from "axios";
 import cookie from "./cookie";
-import { URL, SERVER_PORT } from "../config";
-const url = `http://${URL}:${SERVER_PORT}/`;
+
+const SERVER = process.env.VUE_APP_SERVER;
+const CHAT_SERVER = process.env.VUE_APP_CHAT_SERVER;
 
 class Service {
   // Get UserInfo
   static getUserInfo() {
     const token = cookie.getCookie("auth-token"); //window.localStorage.getItem("auth-token")
-    return axios.get(`${url}users/user`, {
+    return axios.get(`${SERVER}users/user`, {
       params: {},
       headers: { "auth-token": token }
     });
@@ -16,7 +17,7 @@ class Service {
   // Retrieve User's History
   static getUserHistory() {
     const token = cookie.getCookie("auth-token"); //window.localStorage.getItem("auth-token")
-    return axios.get(`${url}users/userHistory`, {
+    return axios.get(`${SERVER}users/userHistory`, {
       params: {},
       headers: { "auth-token": token }
     });
@@ -26,7 +27,7 @@ class Service {
   static async changeCover(newCover) {
     const token = cookie.getCookie("auth-token");
     const response = await axios.post(
-      `${url}users/changeCover`,
+      `${SERVER}users/changeCover`,
       { newCover },
       { params: {}, headers: { "auth-token": token } }
     );
@@ -37,7 +38,7 @@ class Service {
   static async changeProfile(newProfile) {
     const token = cookie.getCookie("auth-token");
     const response = await axios.post(
-      `${url}users/changeProfile`,
+      `${SERVER}users/changeProfile`,
       { newProfile },
       { params: {}, headers: { "auth-token": token } }
     );
@@ -47,7 +48,7 @@ class Service {
   // Get Users info
   static getAllUsers() {
     const token = cookie.getCookie("auth-token");
-    return axios.get(`${url}users/allUsers`, {
+    return axios.get(`${SERVER}users/allUsers`, {
       params: {},
       headers: { "auth-token": token }
     });
@@ -57,7 +58,7 @@ class Service {
   static getCurrentlyStreaming(limit, status) {
     const token = cookie.getCookie("auth-token");
     return axios.post(
-      `${url}streams/getCurrentlyStream`,
+      `${SERVER}streams/getCurrentlyStream`,
       { limit, status },
       {
         params: {},
@@ -70,7 +71,7 @@ class Service {
   static changePassword(password, newPassword) {
       const token = cookie.getCookie("auth-token");
       return axios.post(
-        `${url}auth/changePassword`,
+        `${SERVER}auth/changePassword`,
         { password, newPassword },
         {
           params: {},
@@ -94,7 +95,7 @@ class Service {
     const route = role === "Device" ? "deviceStartStream" : "startStream";
     console.log(streamTitle + description + isPrivate + password);
     return axios.post(
-      `${url}streams/${route}`,
+      `${SERVER}streams/${route}`,
       {
         streamTitle,
         description,
@@ -111,7 +112,7 @@ class Service {
   static async joinStream(streamCode, pwd) {
     const token = cookie.getCookie("auth-token");
     const result = await axios.post(
-      `${url}streams/joinStream`,
+      `${SERVER}streams/joinStream`,
       {
         streamCode,
         pwd
@@ -130,7 +131,7 @@ class Service {
   static async editStream(streamCode, streamTitle, description) {
     const token = cookie.getCookie("auth-token"); //window.localStorage.getItem("auth-token")
     const result = await axios.post(
-      `${url}streams/editstream`,
+      `${SERVER}streams/editstream`,
       {
         streamCode,
         streamTitle,
@@ -151,7 +152,7 @@ class Service {
     const token = cookie.getCookie("auth-token"); //window.localStorage.getItem("auth-token")
     const result = await axios
       .post(
-        `${url}streams/${route}`,
+        `${SERVER}streams/${route}`,
         {
           streamCode
         },
@@ -168,7 +169,7 @@ class Service {
   static getStreamDetail(streamCode) {
     const token = cookie.getCookie("auth-token");
     return axios.post(
-      `${url}streams/getStreamDetail`,
+      `${SERVER}streams/getStreamDetail`,
       { streamCode },
       { params: {}, headers: { "auth-token": token } }
     );
@@ -176,7 +177,7 @@ class Service {
 
   // Post Data for signing up
   static async signUp(email, pwd, name) {
-    return axios.post(`${url}auth/signUp`, {
+    return axios.post(`${SERVER}auth/signUp`, {
       email,
       pwd,
       name
@@ -187,7 +188,7 @@ class Service {
   static async changeRole(email, role) {
     const token = cookie.getCookie("auth-token"); //window.localStorage.getItem("auth-token")
     const result = await axios.post(
-      `${url}users/changeRole`,
+      `${SERVER}users/changeRole`,
       {
         email,
         role
@@ -205,7 +206,7 @@ class Service {
   static changeName(name, password) {
     const token = cookie.getCookie("auth-token");
     return axios.post(
-      `${url}users/changeName`,
+      `${SERVER}users/changeName`,
       { name , password},
       {
         params: {},
@@ -216,7 +217,7 @@ class Service {
 
   // Post Data for login
   static async login(email, pwd) {
-    const credential = await axios.post(`${url}auth/login`, {
+    const credential = await axios.post(`${SERVER}auth/login`, {
       email,
       pwd
     });
@@ -230,7 +231,7 @@ class Service {
   }
 
   static async deviceLogin(email, pwd) {
-    const credential = await axios.post(`${url}auth/login`, {
+    const credential = await axios.post(`${SERVER}auth/login`, {
       email,
       pwd
     });
@@ -253,7 +254,7 @@ class Service {
 
   // Get All Chats
   static async getAllChat(roomId) {
-    const chat = await axios.post(`http://${URL}:4000/getChat`, {
+    const chat = await axios.post(`${CHAT_SERVER}getChat`, {
       roomId
     });
     if (chat.data != undefined) {

@@ -27,13 +27,14 @@
 
 <script>
 import io from "socket.io-client";
-import { URL } from "../../../config";
+
+const DEVICE_SERVER = process.env.VUE_APP_DEVICE_SERVER;
 
 export default {
   data: () => ({
     editDevice: false,
     deviceName: "",
-    socket: io(`http://${URL}:3001`)
+    socket: io(DEVICE_SERVER)
   }),
   props: {
     device: Object

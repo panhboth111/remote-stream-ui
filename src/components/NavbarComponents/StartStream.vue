@@ -202,7 +202,7 @@
 import backend from "../../Service";
 //import axios from "axios";
 import io from "socket.io-client";
-import { URL } from "../../../config";
+const DEVICE_SERVER = process.env.VUE_APP_DEVICE_SERVER;
 
 import Thumbnail from "../Reusables/Thumbnail";
 
@@ -215,7 +215,7 @@ export default {
     user: {},
     loading: false,
     devices: [],
-    socket: io(`${URL}:3001`),
+    socket: io(DEVICE_SERVER),
     selectedDevice: "",
     create_stream: false,
     value: false,
