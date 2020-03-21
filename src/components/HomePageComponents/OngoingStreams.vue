@@ -7,7 +7,11 @@
         >Refresh</v-btn
       >
     </v-card-title>
-    <v-sheet class="mx-auto transparent" max-width="900px">
+    <v-sheet
+      class="mx-auto transparent"
+      max-width="900px"
+      v-if="streams.length !== 0"
+    >
       <v-slide-group>
         <v-slide-item v-for="stream in streams" :key="stream.id">
           <Thumbnail
@@ -19,6 +23,17 @@
           <Thumbnail type="mobile" :stream="stream" v-else />
         </v-slide-item>
       </v-slide-group>
+    </v-sheet>
+    <v-sheet
+      class="d-flex flex-column justify-center align-center transparent"
+      max-width="100%"
+      height="244px"
+      v-else
+    >
+      <v-card class="transparent title font-weight-bold" flat>Uh oh!</v-card>
+      <v-card class="transparent" flat
+        >There are no streams on at the moment...</v-card
+      >
     </v-sheet>
   </v-card>
 </template>
