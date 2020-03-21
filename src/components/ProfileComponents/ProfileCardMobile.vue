@@ -1,13 +1,24 @@
 <template>
   <v-card light class="transparent" flat>
     <v-img
-      :src="user.coverPic"
+      :src="
+        user.coverPic
+          ? user.coverPic
+          : 'https://tokystorage.s3.amazonaws.com/images/default-cover.png'
+      "
       height="400px"
       class="d-flex justify-center align-center"
     >
       <v-sheet class="d-flex flex-column align-center transparent">
         <v-avatar size="220" class="justify-space-around">
-          <img :src="user.profilePic" :alt="user.name" />
+          <img
+            :src="
+              user.profilePic
+                ? user.profilePic
+                : 'https://t3.ftcdn.net/jpg/00/64/67/52/240_F_64675209_7ve2XQANuzuHjMZXP3aIYIpsDKEbF5dD.jpg'
+            "
+            :alt="user.name"
+          />
         </v-avatar>
         <v-btn fab class="mt-n10 primary" @click="uploadProfilePic">
           <v-icon>mdi-camera</v-icon>

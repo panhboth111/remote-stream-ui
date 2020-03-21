@@ -11,7 +11,14 @@
         <v-card class="d-flex flex-column text-center pa-5 transparent" flat>
           <v-card-text class="">
             <v-avatar size="62">
-              <img :src="user.profilePic" :alt="user.name" />
+              <img
+                :src="
+                  user.profilePic
+                    ? user.profilePic
+                    : 'https://t3.ftcdn.net/jpg/00/64/67/52/240_F_64675209_7ve2XQANuzuHjMZXP3aIYIpsDKEbF5dD.jpg'
+                "
+                :alt="user.name"
+              />
             </v-avatar>
           </v-card-text>
           <v-list-item two-line>
