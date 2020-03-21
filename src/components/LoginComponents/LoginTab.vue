@@ -6,7 +6,7 @@
         label="E-mail"
         v-model="username"
         :rules="[
-          v => !!v || 'E-mail is required',
+          v => !!v || '',
           v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
         ]"
       ></v-text-field>
@@ -17,7 +17,7 @@
         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
         :type="showPassword ? 'text' : 'password'"
         @click:append="showPassword = !showPassword"
-        :rules="[v => !!v || 'Password is required']"
+        :rules="[v => !!v || '']"
       ></v-text-field>
 
       <v-checkbox
