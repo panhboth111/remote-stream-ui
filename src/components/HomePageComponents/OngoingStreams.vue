@@ -30,8 +30,14 @@
       height="244px"
       v-else
     >
+      <v-img
+      src="../../assets/empty.png"
+      width="384px"
+      class="justify-center align-center"
+      >
+      </v-img>
       <v-card class="transparent title font-weight-bold" flat>Uh oh!</v-card>
-      <v-card class="transparent" flat
+      <v-card class="transparent text-center" flat
         >There are no streams on at the moment...</v-card
       >
     </v-sheet>
