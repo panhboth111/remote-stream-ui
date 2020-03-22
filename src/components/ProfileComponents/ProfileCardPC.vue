@@ -2,7 +2,11 @@
   <v-card flat tile light class="transparent">
     <!-- Cover picture component -->
     <v-img
-      :src="user.coverPic"
+      :src="
+        user.coverPic
+          ? user.coverPic
+          : 'https://tokystorage.s3.amazonaws.com/images/default-cover.png'
+      "
       height="410px"
       class="d-flex justify-center align-center"
     >
@@ -15,7 +19,14 @@
         <v-card flat class="transparent">
           <v-sheet class="d-flex flex-column transparent">
             <v-avatar size="220">
-              <img :src="user.profilePic" :alt="user.name" />
+              <img
+                :src="
+                  user.profilePic
+                    ? user.profilePic
+                    : 'https://t3.ftcdn.net/jpg/00/64/67/52/240_F_64675209_7ve2XQANuzuHjMZXP3aIYIpsDKEbF5dD.jpg'
+                "
+                :alt="user.name"
+              />
             </v-avatar>
             <v-card-actions class="justify-space-around">
               <v-btn fab class="mt-n10 primary" @click="uploadProfilePic">
