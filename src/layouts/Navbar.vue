@@ -1,28 +1,15 @@
 <template>
   <v-app-bar dense class="primary pr-2" dark flat app clipped-left>
-    <v-app-bar-nav-icon
-      @click="$store.commit('toggleNavDrawer')"
-    ></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click="$store.commit('toggleNavDrawer')"></v-app-bar-nav-icon>
     <v-toolbar-title class="text-uppercase">
-      <router-link
-        to="/home"
-        exact
-        class="white--text"
-        style="text-decoration: none"
-      >
-        <span class=" title">Class</span>
+      <router-link to="/home" exact class="white--text" style="text-decoration: none">
+        <span class="title">Class</span>
         <span class="font-weight-bold title">Time</span>
       </router-link>
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <span v-if="$vuetify.breakpoint.mdAndUp">
-      <v-btn
-        outlined
-        v-if="user.isStreaming"
-        class="red"
-        id="stopStreamBtn"
-        @click="stopStream()"
-      >
+      <v-btn outlined v-if="user.isStreaming" class="red" id="stopStreamBtn" @click="stopStream()">
         <v-icon left>mdi-record</v-icon>Stop Stream
       </v-btn>
       <StartStream v-else />
@@ -69,7 +56,7 @@ export default {
       auth();
     },
     async stopStream() {
-      // this.socket.emit("stop", this.user.email);
+      this.socket.emit("stopStreaming", this.user.email);
       await backend.stopStream();
       await setTimeout(() => {
         this.socket2.emit(

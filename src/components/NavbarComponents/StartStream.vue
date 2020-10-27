@@ -13,6 +13,7 @@
             <v-card-text class="ma-0 pa-0 d-flex flex-row">
               <v-text-field
                 id="title"
+                name="title"
                 label="Title"
                 required
                 :rules="[v => !!v || 'Title is required']"
@@ -64,16 +65,9 @@
               v-model="is_private"
               label="Private stream"
             ></v-switch>
-            <v-text-field
-              label="Password"
-              color="black"
-              required
-              v-if="is_private"
-            ></v-text-field>
+            <v-text-field label="Password" color="black" required v-if="is_private"></v-text-field>
             <v-card class="d-flex flex-column pa-0" flat>
-              <v-card-title class="body-1 font-weight-bold"
-                >Preview</v-card-title
-              >
+              <v-card-title class="body-1 font-weight-bold">Preview</v-card-title>
               <Thumbnail
                 class="align-self-center"
                 type="small"
@@ -89,24 +83,21 @@
               <!-- <div>
                 Thumbnail Preview:
                 <v-img :src="thumbnailURL" width="200px" height="100px"></v-img>
-              </div> -->
+              </div>-->
             </v-card>
           </v-form>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="black darken-1" text @click="create_stream = false"
-            >Cancel</v-btn
-          >
+          <v-btn color="black darken-1" text @click="create_stream = false">Cancel</v-btn>
           <v-btn
             text
             class="font-weight-black"
             v-if="is_from_webcam && user.role !== 'Student'"
             @click="select_classes = true"
             :disabled="!valid"
-            >Continue</v-btn
-          >
+          >Continue</v-btn>
           <v-btn
             v-else
             text
@@ -120,8 +111,7 @@
             "
             id="startBtn"
             :disabled="!valid"
-            >Continue</v-btn
-          >
+          >Continue</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -143,17 +133,14 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="black darken-1" text @click="select_class = false"
-            >Cancel</v-btn
-          >
+          <v-btn color="black darken-1" text @click="select_class = false">Cancel</v-btn>
           <v-btn
             text
             @click="select_classes = true"
             class="font-weight-black"
             id="startStreamBtn"
             :disabled="selectedDevice === ''"
-            >Continue</v-btn
-          >
+          >Continue</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -179,17 +166,14 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="black darken-1" text @click="select_classes = false"
-            >Cancel</v-btn
-          >
+          <v-btn color="black darken-1" text @click="select_classes = false">Cancel</v-btn>
           <v-btn
             id="startBtn"
             color="black darken-1"
             class="font-weight-black"
             text
             @click="stream()"
-            >Continue</v-btn
-          >
+          >Continue</v-btn>
           <v-overlay :value="loading" v-if="devices">
             <v-progress-circular indeterminate size="100"></v-progress-circular>
           </v-overlay>
@@ -308,7 +292,6 @@ export default {
       });
     },
     async deviceStartStream() {
-      console.log("device start");
       const deviceIds = [];
       const selectedClasses = this.devices.filter(x => x["value"] == true);
       selectedClasses.forEach(x => deviceIds.push(x.deviceId));
@@ -333,6 +316,10 @@ export default {
             location.replace(`/stream/${streamCode}`);
           }
         }, 3000);
+      });
+      this.socket.on("error", msg => {
+        alert(msg);
+        window.location.reload();
       });
     }
   },

@@ -10,7 +10,7 @@ class Service {
     const token = cookie.getCookie("auth-token"); //window.localStorage.getItem("auth-token")
     return axios.get(`${SERVER}users/user`, {
       params: {},
-      headers: { "auth-token": token }
+      headers: { "auth-token": token },
     });
   }
 
@@ -19,7 +19,7 @@ class Service {
     const token = cookie.getCookie("auth-token"); //window.localStorage.getItem("auth-token")
     return axios.get(`${SERVER}users/userHistory`, {
       params: {},
-      headers: { "auth-token": token }
+      headers: { "auth-token": token },
     });
   }
 
@@ -50,7 +50,7 @@ class Service {
     const token = cookie.getCookie("auth-token");
     return axios.get(`${SERVER}users/allUsers`, {
       params: {},
-      headers: { "auth-token": token }
+      headers: { "auth-token": token },
     });
   }
 
@@ -62,22 +62,22 @@ class Service {
       { limit, status },
       {
         params: {},
-        headers: { "auth-token": token }
+        headers: { "auth-token": token },
       }
     );
   }
 
   // Start Stream
   static changePassword(password, newPassword) {
-      const token = cookie.getCookie("auth-token");
-      return axios.post(
-        `${SERVER}auth/changePassword`,
-        { password, newPassword },
-        {
-          params: {},
-          headers: { "auth-token": token }
-        }
-      );
+    const token = cookie.getCookie("auth-token");
+    return axios.post(
+      `${SERVER}auth/changePassword`,
+      { password, newPassword },
+      {
+        params: {},
+        headers: { "auth-token": token },
+      }
+    );
   }
 
   // Start Stream
@@ -102,7 +102,7 @@ class Service {
         thumbnail,
         isPrivate,
         password,
-        streamBy
+        streamBy,
       },
       { params: {}, headers: { "auth-token": token } }
     );
@@ -115,7 +115,7 @@ class Service {
       `${SERVER}streams/joinStream`,
       {
         streamCode,
-        pwd
+        pwd,
       },
       { params: {}, headers: { "auth-token": token } }
     );
@@ -135,11 +135,11 @@ class Service {
       {
         streamCode,
         streamTitle,
-        description
+        description,
       },
       {
         params: {},
-        headers: { "auth-token": token }
+        headers: { "auth-token": token },
       }
     );
 
@@ -154,14 +154,15 @@ class Service {
       .post(
         `${SERVER}streams/${route}`,
         {
-          streamCode
+          streamCode,
         },
         {
           params: {},
-          headers: { "auth-token": token }
+          headers: { "auth-token": token },
         }
       )
-      .catch(err => alert(err));
+      .catch((err) => alert(err));
+    console.log(result);
     return result;
   }
 
@@ -180,7 +181,7 @@ class Service {
     return axios.post(`${SERVER}auth/signUp`, {
       email,
       pwd,
-      name
+      name,
     });
   }
 
@@ -191,11 +192,11 @@ class Service {
       `${SERVER}users/changeRole`,
       {
         email,
-        role
+        role,
       },
       {
         params: {},
-        headers: { "auth-token": token }
+        headers: { "auth-token": token },
       }
     );
 
@@ -207,10 +208,10 @@ class Service {
     const token = cookie.getCookie("auth-token");
     return axios.post(
       `${SERVER}users/changeName`,
-      { name , password},
+      { name, password },
       {
         params: {},
-        headers: { "auth-token": token }
+        headers: { "auth-token": token },
       }
     );
   }
@@ -219,7 +220,7 @@ class Service {
   static async login(email, pwd) {
     const credential = await axios.post(`${SERVER}auth/login`, {
       email,
-      pwd
+      pwd,
     });
     const { message, success, token } = credential.data;
     if (success) {
@@ -233,7 +234,7 @@ class Service {
   static async deviceLogin(email, pwd) {
     const credential = await axios.post(`${SERVER}auth/login`, {
       email,
-      pwd
+      pwd,
     });
     const { token } = credential.data;
     if (token) {
@@ -255,14 +256,14 @@ class Service {
   // Get All Chats
   static async getAllChat(roomId) {
     const chat = await axios.post(`${CHAT_SERVER}getChat`, {
-      roomId
+      roomId,
     });
     if (chat.data != undefined) {
       console.log(chat);
       return {
         chats: chat.data.chats,
         questions: chat.data.questions,
-        announcement: chat.data.announcement
+        announcement: chat.data.announcement,
       };
     } else {
       return null;
